@@ -120,7 +120,7 @@ class psd_utils:
     def get_offset(self,canvas, target):
         import cv2
         import numpy as np
-        import matplotlib.pyplot as plt
+
         large_image_pil = canvas  # 大圖 (Pillow 格式)
         small_image_pil = target  # 小圖 (Pillow 格式)
 
