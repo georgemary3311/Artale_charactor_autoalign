@@ -13,3 +13,6 @@
 
 ## 注意事項
 1. 因為對齊圖片是使用open cv的matchTemplate 去做對齊，所以如果腳色過於複雜 PSD檔案中的位置會有誤，請自行調整
+
+## 參考使用方法
+https://youtube.com/live/c2HatnjVlcE
