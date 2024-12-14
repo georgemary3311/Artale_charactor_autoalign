@@ -1,8 +1,8 @@
 # Artale_charactor_autoalign
 
 ## Environment
-psd-tools          1.10.4
-opencv-python      4.10.0.84
+1. psd-tools          1.10.4
+2. opencv-python      4.10.0.84
 
 ## 使用方法
 1. 於https://maples.im/# 捏好自己的角色並下載行走圖
