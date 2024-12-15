@@ -4,13 +4,24 @@
 1. psd-tools          1.10.4
 2. opencv-python      4.10.0.84
 
-## 使用方法
+## 使用方法 
+
+### Auto Align
+
 1. 於https://maples.im/# 捏好自己的角色並下載行走圖 或是透過maplesalon2所捏的腳色並匯出分鏡
 (https://github.com/spd789562/MapleSalon2/releases/tag/app-v0.6.3)
 2. 把程式碼下載下來 把行走圖解壓縮放到與程式同個資料夾
-3. 執行 python main.py
-4. 會生成cape.psd，跑完後再打開來檢查是否有對齊完成
+3. 根據執行方法可以選擇以下兩種，python程式執行或是執行檔
+3.1 執行 python main.py 並選擇選項一
+3.2 執行 Autoalign.exe 選擇選項一
+4. 會生成Cape.psd，跑完後再打開來檢查是否有對齊完成
 
+### GIF生成
+1. 根據執行方法可以選擇以下兩種，python程式執行或是執行檔
+1.1 執行 python main.py 並選擇選項二
+1.2 執行 Autoalign.exe 選擇選項二
+2. 輸入需要轉換成gif的PSD檔案名稱(PSD檔案建議先把圖層合好，會節省時間)
+3. 即會生成PREVIEW資料夾
 
 ## 注意事項
 1. 因為對齊圖片是使用open cv的matchTemplate 去做對齊，所以如果腳色過於複雜 PSD檔案中的位置會有誤，請自行調整
