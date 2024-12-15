@@ -24,11 +24,12 @@
 3. 即會生成PREVIEW資料夾
 
 ### 製作大椅子
+參考影片:https://youtu.be/0pxWmT5UbOw
 1. 根據執行方法可以選擇以下兩種，python程式執行或是執行檔
 1.1 執行 python main.py 並選擇選項三
 1.2 執行 Autoalign.exe 選擇選項三
 2. 輸入要作為基礎的PSD檔案名稱
-3. 輸入要置入的椅子圖片的名稱
+3. 輸入要置入的椅子圖片的名稱(我只測試過1920*1080 用小畫家把高度設成250，其他我沒試過 有問題別找我RRRR)
 
 ## 注意事項
 1. 因為對齊圖片是使用open cv的matchTemplate 去做對齊，所以如果腳色過於複雜 PSD檔案中的位置會有誤，請自行調整
@@ -36,6 +37,8 @@
 2.1 EXE FILE 下載路徑:https://drive.google.com/file/d/1hfWnC8cC2TfL7JLsE3ICRBLH5HYj0og9/view?usp=sharing
 
 2.2 下載後放到與main.py相同的資料夾之後如上述使用方法執行
+
+3. 歡迎提出想法與一起解BUG
 
 ## 參考使用方法
 https://youtube.com/live/c2HatnjVlcE
