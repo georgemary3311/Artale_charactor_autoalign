@@ -25,6 +25,8 @@
 
 ## 注意事項
 1. 因為對齊圖片是使用open cv的matchTemplate 去做對齊，所以如果腳色過於複雜 PSD檔案中的位置會有誤，請自行調整
+2.1 EXE FILE 下載路徑:https://drive.google.com/file/d/1uFIn0K-niC1h2nKEEzW_HQfcq8yIZmcU/view?usp=sharing
+2.2 下載後放到與main.py相同的資料夾之後如上述使用方法執行
 
 ## 參考使用方法
 https://youtube.com/live/c2HatnjVlcE
