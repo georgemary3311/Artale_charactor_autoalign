@@ -41,6 +41,11 @@ def preview(name):
     psd = psdutil()
     if ".psd" not in name:
         name += ".psd"
+    
+    lists = os.listdir(root)
+    if name not in lists:
+        print("File {} not found in {}".format(name,root))
+        return 1
     psd.load_psd("{}/{}".format(root,name))
     psd.preview(root)
 
@@ -92,12 +97,24 @@ def unzip_file(path,name):
     with zipfile.ZipFile(zip_filename, 'r') as zip_ref:
         zip_ref.extractall(extract_to_directory)
 
+def make_chair(filename,pic_name):
+    psd = psdutil()
+    psd.load_psd("{}/{}".format(root,filename))# left
 
+    psd_right = psdutil()
+    psd_right.load_psd("{}/src/Avatar_Longcoat.psd".format(root))
+    psd.make_bigchair("{}/{}".format(root,pic_name),psd_right.psd)
+    psd.save_psd("{}/Cape.psd".format(root))
+    psd_right.save_psd("{}/Longcoat.psd".format(root))
+
+
+    
 def menu():
     menu = [
             "目前功能",
             "1. Auto Align",
             "2. 預覽 from psd",
+            "3. Make Big Chair",
             #"3. 透過https://maples.im/# 的下載網址來auto align",
             "0. 退出"
         ]
@@ -112,23 +129,46 @@ def menu():
             # 在這裡加入 Auto Align 功能的代碼
             create_psd_by_png()
         elif user_choice == "2":
-            print("你選擇了 預覽 from psd 功能")
+            print("你選擇了 預覽 from psd 功能(建議先把製作好的圖層們合併，加速載入時間)")
             # 在這裡加入 預覽 from psd 功能的代碼
-            finename = input("檔案名稱: ")
-            preview(finename)
-        # elif user_choice =="3":
-        #     print("你選擇了 透過https://maples.im/# 的下載網址來auto align 功能")
-        #     url = input("請輸入下載網址(於下載行走圖右鍵->複製連結網址): ")
-        #     maples_im_align(url)
+            filename = input("檔案名稱: ")
+            preview(filename)
+        elif user_choice =="3":
+            filename = input("請輸入作為基底的psd的檔案名稱(另外一個檔案會使用src底下的另外一個檔案會使用src底下的Avatar_Longcoat.psd): ")
+            pic_name = input("請輸入椅子圖片名稱(椅子寬度請超過250pixel): ")
+            lists = os.listdir(root)
+            if ".psd" not in filename:
+                filename+=".psd"
+            if ".jpg" not in pic_name and ".png" not in pic_name:
+                if "{}.jpg".format(pic_name) in lists:
+                    pic_name+=".jpg"
+                elif "{}.png".format(pic_name) in lists:
+                    pic_name+=".png"
+                else:
+                    print("no {} found in {} folder".format(pic_name,root))
+                    return 1
+            if filename not in lists :
+                print("file {} not found in {}".format(filename,root))
+                return 1
+            if pic_name not in lists :
+                print("file {} not found in {}".format(pic_name,root))
+                return 1
+            make_chair(filename,pic_name)
         elif user_choice == "0":
             print("退出程式")
             break
         else:
             print("無效的選擇，請重新輸入。")
     
-
-
+def show_info():
+    os.system("clear")
+    infos=['Artile Little Tool',
+           'Version: 1.0.3',
+           'Author: George.Chang']
+    print("\n".join(infos))
+    print("\n\n")
     
 
 if __name__ == "__main__":
+    show_info()
     menu()

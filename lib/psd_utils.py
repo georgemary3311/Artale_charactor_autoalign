@@ -1,5 +1,6 @@
 import os
 import psd_tools
+import numpy as np
 from PIL import Image
 from psd_tools import PSDImage
 from psd_tools.api.layers import PixelLayer as pxl
@@ -183,7 +184,6 @@ class psd_utils:
                     print(e)
         print("total failed count:{}".format(errcnt))
 
-
     def load_png_bak(self,path,bx=0,by=0,name=""):
         png_image = Image.open(path).convert("RGBA")
         img = self.orgcanvas.crop((bx*250,by*250,250,250))
@@ -268,4 +268,97 @@ class psd_utils:
                 os.makedirs(folder_path)
             images[0].save('{}/{}.gif'.format(folder_path,key), save_all=True, append_images=images[1:], duration=delay, loop=0)    
 
+    def set_redpoint_left(self):
+        #原本的位置 x = 142 , y = 136
+        x = 142
+        y = 136
+        offset_x = 20
+        offset_y = 23
+        for layer in self.psd:
+            if layer.is_group():
+                print(layer)
+                if "data" in layer.name:
+                    for child in layer:
+                        if "origin" not in child.name:
+                            continue
 
+                        sit_x = self.cape['sit']['x']*250
+                        sit_y = self.cape['sit']['y']*250
+                        # 直接把layer sit那邊的紅點點取代掉
+                        #layer.composite().crop((sit_x,sit_y,sit_x+250,sit_y+250))
+                        tmp = child.composite().convert("RGBA")
+                        img = Image.new(mode="RGBA",size=(2750,3500))
+                        img.paste(tmp, child.offset, tmp)
+                        pixels=np.array(img)
+                        #將椅子的地方設定成透明
+                        pixels[sit_y:sit_y+249,sit_x:sit_x+249] = [0, 0, 0, 0]
+                        #設定紅點
+                        pixels[sit_y+249-offset_y,sit_x+249-offset_x] = [255, 0, 0, 255]
+                        #取代原本的圖層
+                        result_img = Image.fromarray(pixels)
+                        png_layer = pxl.frompil(result_img,psd_file=self.psd,layer_name=child.name,left=0,top=0)
+                        self.psd.append(png_layer)
+                        png_layer.move_to_group(layer)
+                        layer.remove(child)
+                        
+    def set_redpoint_right(self,x,psd):
+        #原本的位置 x = 142 , y = 136
+        offset_x = 20
+        offset_y = 23
+        for layer in psd:
+            if layer.is_group():
+                print(layer)
+                if "data" in layer.name:
+                    layer.visible=True
+                    for child in layer:
+                        if "origin" not in child.name:
+                            continue
+                        sit_x = self.cape['sit']['x']*250
+                        sit_y = self.cape['sit']['y']*250
+                        # 直接把layer sit那邊的紅點點取代掉
+                        #layer.composite().crop((sit_x,sit_y,sit_x+250,sit_y+250))
+                        tmp = child.composite().convert("RGBA")
+                        img = Image.new(mode="RGBA",size=(2750,3500))
+                        img.paste(tmp, child.offset, tmp)
+                        pixels=np.array(img)
+                        #將椅子的地方設定成透明
+                        pixels[sit_y:sit_y+249,sit_x:sit_x+249] = [0, 0, 0, 0]
+                        #設定紅點
+                        pixels[sit_y+249-offset_y,x+offset_x] = [255, 0, 0, 255]
+                        #取代原本的圖層
+                        result_img = Image.fromarray(pixels)
+                        png_layer = pxl.frompil(result_img,psd_file=psd,layer_name=child.name,left=0,top=0)
+                        psd.append(png_layer)
+                        png_layer.move_to_group(layer)
+                        layer.remove(child)
+
+
+    def make_bigchair(self,pic_path,psd_right):
+        img = Image.open(pic_path).convert("RGBA")
+        limited_x=479
+        limited_y=250
+        #check char size:
+        y=img.height
+        x=img.width
+        if img.width>limited_x:
+            x=250
+        if img.height > limited_y:
+            y=250
+        img = img.crop((0,0,x,y)).convert("RGBA")
+        # split image
+        if x > 250:
+            img_left=img.crop((0,0,250,y)).convert('RGBA')
+            img_right=img.crop((251,0,x,y)).convert('RGBA')
+        else:
+            img_left=img.crop((0,0,250,y)).convert('RGBA')
+        #put pic to cape 
+        png_layer_left = pxl.frompil(img_left,psd_file=self.psd,layer_name="chair_left",left=self.cape['sit']['x']*250,top=self.cape['sit']['y']*250+250-y)
+        self.psd.append(png_layer_left)
+        self.set_redpoint_left()
+
+        if x > 250:
+            print("Relpace second psd file")
+            #put cap to coat
+            png_layer_right = pxl.frompil(img_right,psd_file=psd_right,layer_name="chair_right",left=self.cape['sit']['x']*250+(500-x),top=self.cape['sit']['y']*250+250-y)
+            psd_right.append(png_layer_right)
+            self.set_redpoint_right(self.cape['sit']['x']*250+(500-x),psd_right)
