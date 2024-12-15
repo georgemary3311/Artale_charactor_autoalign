@@ -5,7 +5,8 @@
 2. opencv-python      4.10.0.84
 
 ## 使用方法
-1. 於https://maples.im/# 捏好自己的角色並下載行走圖 或是透過maplesalon2(https://github.com/spd789562/MapleSalon2/releases/tag/app-v0.6.3)所捏的腳色並匯出分鏡
+1. 於https://maples.im/# 捏好自己的角色並下載行走圖 或是透過maplesalon2所捏的腳色並匯出分鏡
+(https://github.com/spd789562/MapleSalon2/releases/tag/app-v0.6.3)
 2. 把程式碼下載下來 把行走圖解壓縮放到與程式同個資料夾
 3. 執行 python main.py
 4. 會生成cape.psd，跑完後再打開來檢查是否有對齊完成
