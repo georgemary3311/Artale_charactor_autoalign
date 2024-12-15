@@ -90,6 +90,11 @@ class psd_utils:
     
     def load_png(self,path,name=""):
         errcnt=0
+        png_path=""
+        if "character-action-split-frame" in path:
+            png_path = "{}/default-{}-{}.png"
+        elif "CharacterSpriteSheet" in path:
+            png_path = "{}/{}_{}.png"
         for key in self.cape.keys():
             cape_x = self.cape[key]['x']
             cape_y = self.cape[key]['y']
@@ -98,7 +103,7 @@ class psd_utils:
             for i in range(blocks):
                 try:
                     print("Load png : {}/{}_{}.png".format(path,key,i))
-                    png_image = Image.open("{}/{}_{}.png".format(path,key,i)).convert("RGBA")
+                    png_image = Image.open(png_path.format(path,key,i)).convert("RGBA")
                     img = self.orgcanvas.crop(((cape_x+i)*250,(cape_y*250),(cape_x+i+1)*250,(cape_y+1)*250))
                     x,y = self.get_offset(img,png_image)
                     png_layer = pxl.frompil(png_image,psd_file=self.psd,layer_name="{}_{}".format(key,i),left=(cape_x+i)*250+x,top=(cape_y)*250+y)
@@ -107,7 +112,7 @@ class psd_utils:
                 except Exception as e:
                     errcnt+=1
                     print("load failed")
-        print("total failed cound:{}".format(errcnt))
+        print("total failed count:{}".format(errcnt))
 
     def load_png_bak(self,path,bx=0,by=0,name=""):
         png_image = Image.open(path).convert("RGBA")
@@ -120,7 +125,6 @@ class psd_utils:
     def get_offset(self,canvas, target):
         import cv2
         import numpy as np
-
         large_image_pil = canvas  # 大圖 (Pillow 格式)
         small_image_pil = target  # 小圖 (Pillow 格式)
 
