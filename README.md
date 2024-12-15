@@ -23,6 +23,13 @@
 2. 輸入需要轉換成gif的PSD檔案名稱(PSD檔案建議先把圖層合好，會節省時間)
 3. 即會生成PREVIEW資料夾
 
+### 製作大椅子
+1. 根據執行方法可以選擇以下兩種，python程式執行或是執行檔
+1.1 執行 python main.py 並選擇選項三
+1.2 執行 Autoalign.exe 選擇選項三
+2. 輸入要作為基礎的PSD檔案名稱
+3. 輸入要置入的椅子圖片的名稱
+
 ## 注意事項
 1. 因為對齊圖片是使用open cv的matchTemplate 去做對齊，所以如果腳色過於複雜 PSD檔案中的位置會有誤，請自行調整
 2.1 EXE FILE 下載路徑:https://drive.google.com/file/d/1uFIn0K-niC1h2nKEEzW_HQfcq8yIZmcU/view?usp=sharing
