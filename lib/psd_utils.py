@@ -303,7 +303,7 @@ class psd_utils:
                         
     def set_redpoint_right(self,x,psd):
         #原本的位置 x = 142 , y = 136
-        offset_x = 20
+        offset_x = 21
         offset_y = 23
         for layer in psd:
             if layer.is_group():
@@ -324,7 +324,8 @@ class psd_utils:
                         #將椅子的地方設定成透明
                         pixels[sit_y:sit_y+249,sit_x:sit_x+249] = [0, 0, 0, 0]
                         #設定紅點
-                        pixels[sit_y+249-offset_y,x+offset_x] = [255, 0, 0, 255]
+                        pixels[sit_y+249-offset_y,x-offset_x] = [255, 0, 0, 255]
+                        print("紅點位置:{},{}".format(x-offset_x-sit_x,249-offset_y))
                         #取代原本的圖層
                         result_img = Image.fromarray(pixels)
                         png_layer = pxl.frompil(result_img,psd_file=psd,layer_name=child.name,left=0,top=0)
