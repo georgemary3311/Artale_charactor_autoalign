@@ -104,7 +104,18 @@ class psd_utils:
                 try:
                     print("Load png : {}/{}_{}.png".format(path,key,i))
                     png_image = Image.open(png_path.format(path,key,i)).convert("RGBA")
-                    img = self.orgcanvas.crop(((cape_x+i)*250,(cape_y*250),(cape_x+i+1)*250,(cape_y+1)*250))
+                    #因為有些output的圖片更大 比預計的格子還大 所以動態調整
+                    offset0 = 0
+                    offset1 = 0
+                    print (type(png_image.width))
+                    print(png_image.height)
+                    if png_image.width >=250:
+                        offset0 = png_image.width - 250
+                    if png_image.height >=250:
+                        offset1 = png_image.height - 250
+                    print("offset {},{}".format(offset0,offset1))
+                    
+                    img = self.orgcanvas.crop(((cape_x+i)*250,(cape_y*250),(cape_x+i+1)*250+offset0,(cape_y+1)*250+offset1))
                     x,y = self.get_offset(img,png_image)
                     png_layer = pxl.frompil(png_image,psd_file=self.psd,layer_name="{}_{}".format(key,i),left=(cape_x+i)*250+x,top=(cape_y)*250+y)
                     self.layers[key]=png_layer
@@ -112,6 +123,7 @@ class psd_utils:
                 except Exception as e:
                     errcnt+=1
                     print("load failed")
+                    print(e)
         print("total failed count:{}".format(errcnt))
 
     def load_png_bak(self,path,bx=0,by=0,name=""):
