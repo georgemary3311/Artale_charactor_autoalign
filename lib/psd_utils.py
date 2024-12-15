@@ -92,7 +92,7 @@ class psd_utils:
         errcnt=0
         png_path=""
         if "character-action-split-frame" in path:
-            png_path = "{}/default-{}-{}.png"
+            png_path = "{}/{}-{}.png"
         elif "CharacterSpriteSheet" in path:
             png_path = "{}/{}_{}.png"
         for key in self.cape.keys():
