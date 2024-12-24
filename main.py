@@ -25,15 +25,30 @@ def check_folder():
         return 1
     return 0
 
+def check_ismaplesalon_with_json():
+    global parse_folder
+    if parse_folder == "character-action-split-frame":
+        lists2 = os.listdir("{}".format(default_folder[parse_folder]))
+        for l in lists2:
+            if "walk1.json" in l:
+                return 1
+    return 0
+
+        
+
 def create_psd_by_png():
     if check_folder():
         os._exit()
-    psd = psdutil()
-    psd.load_psd("{}/src/Avatar_Cape.psd".format(root))
-    psd.load_png(default_folder[parse_folder])
-    # psd.layers['edithere:cape_capeBelowBody_83'].visible = False 
-    # psd.show_psd()
-    psd.save_psd("{}/Cape.psd".format(root))
+    if check_ismaplesalon_with_json():
+        print("Maplesalon json exists")
+        load_maplesalon()
+    else:
+        psd = psdutil()
+        psd.load_psd("{}/src/Avatar_Cape.psd".format(root))
+        psd.load_png(default_folder[parse_folder])
+        # psd.layers['edithere:cape_capeBelowBody_83'].visible = False 
+        # psd.show_psd()
+        psd.save_psd("{}/Cape.psd".format(root))
 
 def preview(name):
     if check_folder():
@@ -107,14 +122,32 @@ def make_chair(filename,pic_name):
     psd.save_psd("{}/Cape.psd".format(root))
     psd_right.save_psd("{}/Longcoat.psd".format(root))
 
+def pic_classify():
+    if check_folder():
+        os._exit()
+    psd = psdutil()
+    psd.load_psd("{}/src/Avatar_Cape.psd".format(root))
+    for key in psd.cape.keys():
+        psd.classify(default_folder[parse_folder],key)
 
-    
+def load_maplesalon():
+    if check_folder():
+        os._exit()
+    psd = psdutil()
+    psd.load_psd("{}/src/Avatar_Cape.psd".format(root))
+    pics = psd.load_mapleson_png_with_json(default_folder[parse_folder])
+    psd.load_png(default_folder[parse_folder],pics=pics)
+    psd.save_psd("{}/Cape.psd".format(root))
+
+
 def menu():
     menu = [
             "目前功能",
             "1. Auto Align",
-            "2. 預覽 from psd",
+            "2. Convert PSD to GIF",
             "3. Make Big Chair",
+            # "4. Maplesalon 特效分類(不是很準 +-玩玩)",
+            # "5. load config with json",
             #"3. 透過https://maples.im/# 的下載網址來auto align",
             "0. 退出"
         ]
@@ -129,7 +162,7 @@ def menu():
             # 在這裡加入 Auto Align 功能的代碼
             create_psd_by_png()
         elif user_choice == "2":
-            print("你選擇了 預覽 from psd 功能(建議先把製作好的圖層們合併，加速載入時間)")
+            print("你選擇了 Convert PSD to GIF 功能(建議先把製作好的圖層們合併，加速載入時間，同時請注意PSD內的檔案圖層應該對齊完畢)")
             # 在這裡加入 預覽 from psd 功能的代碼
             filename = input("檔案名稱: ")
             preview(filename)
@@ -154,6 +187,10 @@ def menu():
                 print("file {} not found in {}".format(pic_name,root))
                 return 1
             make_chair(filename,pic_name)
+        # elif user_choice == "4":
+        #     pic_classify()
+        # elif user_choice == "5":
+        #     load_maplesalon()
         elif user_choice == "0":
             print("退出程式")
             break
@@ -161,9 +198,8 @@ def menu():
             print("無效的選擇，請重新輸入。")
     
 def show_info():
-    os.system("clear")
     infos=['Artile Little Tool',
-           'Version: 1.0.3',
+           'Version: 1.0.4',
            'Author: George.Chang']
     print("\n".join(infos))
     print("\n\n")
