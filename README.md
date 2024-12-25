@@ -5,7 +5,7 @@
 2. opencv-python      4.10.0.84
 
 ## 使用方法 
-* 完整demo video: https://youtube.com/live/NND-JUEM3l8
+* 完整demo video: https://youtu.be/qCrf0S1Wksw
 ### Auto Align
 
 1. 於https://maples.im/# 捏好自己的角色並下載行走圖 或是透過maplesalon2所捏的腳色並匯出分鏡
