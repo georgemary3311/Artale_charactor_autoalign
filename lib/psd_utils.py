@@ -430,13 +430,15 @@ class psd_utils:
             images[i] = {'json' : "" , 'gesture' : []}
 
         for l in lists:
+            
             try:
+                sign_count= l.count('-')
                 if "json" in l:
-                    images[l.split('.')[0]]['json'] = l
+                    images[l.split('.')[0].split('-')[-1]]['json'] = l
                 if ".png" in l:
-                    images[l.split('-')[0]]['gesture'].append(l)
-            except Exception:
-                print("Init {} failed, no such key in PSD".format(l))
+                    images[l.split('-')[sign_count-1]]['gesture'].append(l)
+            except Exception as e:
+                print("Init {} failed, no such key in PSD, errmesg:{}".format(l,e))
         # print(images.keys())
         #選擇是要使用哪些圖片
         print("\n\n")
@@ -448,7 +450,7 @@ class psd_utils:
             delays = self.cape[key]['delay']
             pic_lists = images[key]['gesture']
             #重整排續
-            pic_lists = sorted(pic_lists, key=lambda x: int(x.split('-')[1].split('.')[0]))
+            pic_lists = sorted(pic_lists, key=lambda x: int(x.split('-')[-1].split('.')[0]))
             print(pic_lists)
             delay = 0
             pic_index = 0
@@ -479,7 +481,7 @@ class psd_utils:
                             delay += js[i]['delay']
                         pic_index+=1
                         
-            pics = sorted(pics, key=lambda x: int(x.split('-')[1].split('.')[0]))
+            pics = sorted(pics, key=lambda x: int(x.split('-')[-1].split('.')[0]))
             print(pics)
             print("\n")
             pic_arr[key]=pics
