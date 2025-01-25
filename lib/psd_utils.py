@@ -338,7 +338,7 @@ class psd_utils:
         y=img.height
         x=img.width
         if img.width>limited_x:
-            x=250
+            x=479
         if img.height > limited_y:
             y=250
         img = img.crop((0,0,x,y)).convert("RGBA")
