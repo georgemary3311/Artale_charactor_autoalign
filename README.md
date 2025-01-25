@@ -55,6 +55,9 @@ https://youtube.com/live/c2HatnjVlcE
 如果沒有photoshop，我是用https://krita.org/zh-tw/
 
 ## 更新Note:
+20250125
+Known issue
+1. If making chair's pic width over 479, will fail. Current code do fix it. But the EXE file won't update yet. 
 20241216
 1. 支援psd to gif
 2. 支援大椅子(兩件裝備)的製作
