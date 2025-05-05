@@ -1,0 +1,20 @@
+{
+    "menu_title": "目前功能",
+    "option_auto_align": "1. 自動對齊:楓沙龍2(可自動對齊圖層)、MapleSimulator(可大致對齊圖層)",
+    "option_convert_psd_to_gif": "2. 將PSD個動作轉換成GIF",
+    "option_make_big_chair_2": "3. 製作兩件裝的的大椅子(479X250)",
+    "option_make_big_chair_4": "4. 製作四件裝備的大椅子(479X499)",
+    "option_exit": "0. 退出",
+    "prompt_enter_choice": "請輸入選擇的功能編號: ",
+    "prompt_enter_filename": "檔案名稱: ",
+    "prompt_enter_psd_filename": "請輸入作為基底的psd的檔案名稱(另外一個檔案會使用src底下的Avatar_Longcoat.psd): ",
+    "prompt_enter_chair_image": "請輸入椅子圖片名稱(椅子寬度請超過250pixel): ",
+    "error_file_not_found": "檔案 {} 在 {} 資料夾中找不到",
+    "info_auto_align_selected": "你選擇了 Auto Align 功能",
+    "info_convert_psd_to_gif_selected": "你選擇了 Convert PSD to GIF 功能(建議先把製作好的圖層們合併，加速載入時間，同時請注意PSD內的檔案圖層應該對齊完畢)",
+    "info_make_big_chair_selected": "你選擇了 Make Big Chair 功能",
+    "info_exit_program": "退出程式",
+    "error_invalid_choice": "無效的選擇，請重新輸入。",
+    "prompt_press_enter_to_exit": "請按Enter鍵退出",
+    "prompt_enter_2nd_psd_filename": "請輸入第二個psd檔案名稱(預設:Default:src/Avatar_Longcoat.psd): "
+}

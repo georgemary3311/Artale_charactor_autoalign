@@ -9,9 +9,15 @@ from skimage.metrics import structural_similarity as ssim
 from psd_tools import PSDImage
 from psd_tools.api.layers import PixelLayer as pxl
 from psd_tools.api.layers import Group as gp
+from lib.globalstuff import globalstuff
+from lib.globalstuff import Color
 
-class psd_utils:
-
+class psd_utils(globalstuff):
+    '''
+    Function Name:  __init__
+    Description:    Initialize the psd_utils class with default attributes, including PSD file, canvas, gesture configurations, and other metadata.
+    Author:         George Chang
+    '''
     def __init__(self) -> None:
         self.psd=None
         self.orgcanvas = None
@@ -38,7 +44,7 @@ class psd_utils:
             'stabT1':{'x':5,'y':1,'block':3, 'delay':[300,100,350], 'offsetx':[148,150,165], 'offsety':[150,150,150]},
             'stabT2':{'x':5,'y':2,'block':3, 'delay':[300,100,350], 'offsetx':[139,140,158], 'offsety':[150,150,150]},
             'proneStab':{'x':5,'y':3,'block':2, 'delay':[300,400], 'offsetx':[153,153], 'offsety':[150,150]},
-            'stabTF':{'x':7,'y':4,'block':1, 'delay':[100,200,200,200], 'offsetx':[149], 'offsety':[135]},
+            'stabTF':{'x':5,'y':4,'block':3, 'delay':[100,200,200,200], 'offsetx':[ 149,149,159], 'offsety':[150,150,166]},
             'fly':{'x':5,'y':5,'block':2, 'delay':[300,300], 'offsetx':[138,142], 'offsety':[150,150 ]},
             'shoot1':{'x':5,'y':6,'block':3, 'delay':[300,150,350], 'offsetx':[144,144,144], 'offsety':[150,150,150]},
             'shoot2':{'x':5,'y':7,'block':5, 'delay':[160,160,250,100,150], 'offsetx':[143,143,143,143,143], 'offsety':[150,150,150,150,150]},
@@ -53,12 +59,19 @@ class psd_utils:
             'shootF':{'x':9,'y':6,'block':2, 'delay':[300,150,250], 'offsetx':[144,141], 'offsety':[150,150]},
             'sit':{'x':10,'y':11,'block':1, 'delay':[500], 'offsetx':[144], 'offsety':[153]}}
 
-    def load_psd(self,path="",visible = False):
+    '''
+    Function Name:  load_psd
+    Description:    Load a PSD file, initialize its layers, and set visibility for specific layers if required.
+    Parameters:     path (str): The file path of the PSD file to load.
+                    visible (bool): Whether to hide specific layers (default: False).
+    Author:         George Chang
+    '''
+    def load_psd(self, path="", visible=False):
         if path=="":
             return 1
         self.psd = PSDImage.new(mode="RGBA",size=(2750,3500))
         # self.psd = PSDImage.open(path,mode="RGBA")
-        print("load template")
+        self.send_log("Load psd file {}".format(path),"info",color=Color.YELLOW)
         tmp=PSDImage.open(path)
         if visible:
             for t in tmp:
@@ -67,40 +80,69 @@ class psd_utils:
         self.orgcanvas = tmp.composite(layer_filter=lambda layer: layer.is_visible() and layer.kind != 'type')
         for layer in tmp:
             self.psd.append(layer)
-        print("load template finished")
+        self.send_log("Load psd file finished", "info",color=Color.YELLOW)
         if "CAPE" in path.upper():
             self.type="CAPE"
         self.load_layers()
 
-    def save_psd(self,path):
+    '''
+    Function Name:  save_psd
+    Description:    Save the current PSD file to the specified path.
+    Parameters:     path (str): The file path to save the PSD file.
+    Author:         George Chang
+    '''
+    def save_psd(self, path):
         if path =="":
             return 1
         if ".psd" not in path:
             path+=".psd"
+        self.send_log("Save psd file {}".format(path),"info",color=Color.YELLOW)
         self.psd.save(path)
 
+    '''
+    Function Name:  show_psd
+    Description:    Display the composite image of the current PSD file.
+    Author:         George Chang
+    '''
     def show_psd(self):
-        #self.set_layers()
+        self.send_log("Show psd file {}".format(self.psd.name),"info",color=Color.YELLOW)
         self.psd.composite(layer_filter=lambda layer: layer.is_visible() and layer.kind != 'type').show()
     
+    '''
+    Function Name:  load_layers
+    Description:    Load all layers from the current PSD file and store them in a dictionary for easy access.
+    Author:         George Chang
+    '''
     def load_layers(self):
         self.layers={}
         for layer in self.psd:
-            print("set layer{}".format(layer))
+            self.send_log("Loading Layer name: {}".format(layer.name),"info",color=Color.GREEN)
             self.layers[layer.name]=layer
 
+    '''
+    Function Name:  set_layers
+    Description:    Update the layers of the PSD file based on the stored layer dictionary.
+    Author:         George Chang
+    '''
     def set_layers(self):
         for layer in self.psd:
             if layer.name in self.layers.keys():
                 layer = self.layers[layer.name]
-                print(layer.name)
-                print(layer.visible)
-                print("---")
+                self.send_log("Set Layer name: {}".format(layer.name),"info",color=Color.YELLOW)
             else:
                 pass
     
-    def load_png(self,path,name="",pics=[]):
+    '''
+    Function Name:  load_png
+    Description:    Load PNG images from a directory and add them as layers to the PSD file.
+    Parameters:     path (str): The directory path containing PNG files.
+                    name (str): The name of the group to which the PNG layers will be added.
+                    pics (list): A list of PNG file names to load (optional).
+    Author:         George Chang
+    '''
+    def load_png(self, path, name="", pics=[]):
         errcnt=0
+        fail_items=[]
         png_path=""
         lists = os.listdir(path)
         prefix=""
@@ -112,7 +154,7 @@ class psd_utils:
             for l in lists:
                 if "-walk1-0.png" in l:
                     prefix=lists[0].split('-')[0]
-                    print("prefix:{}".format(prefix))
+                    self.send_log("Prefix: {}".format(prefix),"info",color=Color.YELLOW)
                     png_path = "{}/{}-{}-{}.png"
                     withprefix_maplesalon = True
 
@@ -126,46 +168,58 @@ class psd_utils:
             blocks = self.cape[key]['block']
             # load correspond pic and put to psd
             for i in range(blocks):
+                if key == "stabTF" and i <2 :
+                    self.send_log("Stab TF don't conatin action {}".format(i),"info",color=Color.YELLOW)
+                    continue
                 try:
                     if withprefix_maplesalon:
                         p = png_path.format(path,prefix,key,i)
                     else:
                         p = png_path.format(path,key,i)
+                    
                     offset0 = 0
                     offset1 = 0
-                    
+                
                     if len(pics)!=0:
                         #透過json來尋找位置
                         filename = pics[key][i]
-                        print(filename)
                         x = self.cape[key]['offsetx'][i] - self.js[key][i]['x']
                         y = self.cape[key]['offsety'][i] - self.js[key][i]['y']
-                        print("json x:{}, y:{}".format( self.js[key][i]['x'], self.js[key][i]['y']))
+                        self.send_log("Loading Filename {}, json x:{}, y:{}".format(filename, self.js[key][i]['x'], self.js[key][i]['y']),"info",color=Color.GREEN)
                         png_image = Image.open("{}/{}".format(path,filename)).convert("RGBA")
                     else:
-                        print("Load png : {}".format(p))
                         png_image = Image.open(p).convert("RGBA")
                         #因為有些output的圖片更大 比預計的格子還大 所以動態調整
                         if png_image.width >=250:
                             offset0 = png_image.width - 250
                         if png_image.height >=250:
                             offset1 = png_image.height - 250
-                        print("offset {},{}".format(offset0,offset1))
+                        self.send_log("Load PNG {}, offset {},{}".format(p,offset0,offset1),"info",color=Color.YELLOW)
                         img = self.orgcanvas.crop(((cape_x+i)*250,(cape_y*250),(cape_x+i+1)*250+offset0,(cape_y+1)*250+offset1))
                         x,y = self.get_offset(img,png_image)
 
                     png_layer = pxl.frompil(png_image,psd_file=self.psd,layer_name="{}_{}".format(key,i),left=(cape_x+i)*250+x,top=(cape_y)*250+y)
                     self.layers[key]=png_layer
-                    # self.psd.append(png_layer)
+
                     group.append(png_layer)
                     #Move to group
                 except Exception as e:
                     errcnt+=1
-                    print("load failed")
-                    print(e)
-        print("total failed count:{}".format(errcnt))
+                    fail_items.append(p)
+                    self.send_log("Load failed {}, ERR msg:{}".format(p, e),"error",color=Color.RED)
+        self.send_log("Load png file finished, failed count:{}".format(errcnt), "info",color=Color.YELLOW)
+        self.send_log("Failed items: {}".format(fail_items), "info",color=Color.YELLOW)
 
-    def load_png2(self,path,tmp_path,name="",simu=False):
+    '''
+    Function Name:  load_png2
+    Description:    Load PNG images from two directories, process them, and add them as layers to the PSD file.
+    Parameters:     path (str): The directory path containing the first set of PNG files.
+                    tmp_path (str): The directory path containing the second set of PNG files.
+                    name (str): The name of the group to which the PNG layers will be added.
+                    simu (bool): Whether to simulate the process (default: False).
+    Author:         George Chang
+    '''
+    def load_png2(self, path, tmp_path, name="", simu=False):
         errcnt=0
         png_path=""
         png_path = "{}/{}_{}.png"
@@ -176,9 +230,9 @@ class psd_utils:
             # load correspond pic and put to psd
             for i in range(blocks):
                 try:
-                    print("Load png : {}/{}_{}.png".format(path,key,i))
+                    self.send_log("Load png : {}/{}_{}.png".format(path,key,i),"info",color=Color.YELLOW)
                     png_image = Image.open(png_path.format(path,key,i)).convert("RGBA")
-                    print("Load png : {}/{}_{}.png".format(tmp_path,key,i))
+                    self.send_log("Load png : {}/{}_{}.png".format(tmp_path,key,i),"info",color=Color.YELLOW)
                     tmp_img = Image.open(png_path.format(tmp_path,key,i)).convert("RGBA")
                     #因為有些output的圖片更大 比預計的格子還大 所以動態調整
                     offset0 = 0
@@ -187,7 +241,7 @@ class psd_utils:
                         offset0 = png_image.width - 250
                     if png_image.height >=250:
                         offset1 = png_image.height - 250
-                    print("offset {},{}".format(offset0,offset1))
+                    self.send_log("Load PNG {}, offset {},{}".format(png_path.format(path,key,i),offset0,offset1),"info",color=Color.YELLOW)
                     
                     img = self.orgcanvas.crop(((cape_x+i)*250,(cape_y*250),(cape_x+i+1)*250+offset0,(cape_y+1)*250+offset1)).convert("RGBA")
                     img.paste(tmp_img,(77,61))
@@ -202,18 +256,23 @@ class psd_utils:
                     print(e)
         print("total failed count:{}".format(errcnt))
 
-    def load_png_bak(self,path,bx=0,by=0,name=""):
-        png_image = Image.open(path).convert("RGBA")
-        img = self.orgcanvas.crop((bx*250,by*250,250,250))
-        x,y = self.get_offset(img,png_image)
-        png_layer = pxl.frompil(png_image,psd_file=self.psd,layer_name=name,top=by*250+y,left=bx*250+x)
-        self.layers[name]=png_layer
-        self.psd.append(png_layer)        
-
+    '''
+    Function Name:  update_canvas
+    Description:    Update the composite canvas of the current PSD file.
+    Author:         George Chang
+    '''
     def update_canvas(self):
         self.orgcanvas = self.psd.composite()
 
-    def get_offset(self,canvas, target):
+    '''
+    Function Name:  get_offset
+    Description:    Calculate the offset between a canvas and a target image using template matching.
+    Parameters:     canvas (Image): The larger image (canvas).
+                    target (Image): The smaller image (target).
+    Returns:        tuple: The (x, y) offset of the target image within the canvas.
+    Author:         George Chang
+    '''
+    def get_offset(self, canvas, target):
         import cv2
         import numpy as np
         large_image_pil = canvas  # 大圖 (Pillow 格式)
@@ -230,10 +289,16 @@ class psd_utils:
         # 找到最佳匹配的位置
         top_left = max_loc
         h, w = small_image_np.shape
-        print("{}".format(top_left))
+        self.send_log("Top left: {}, w: {}, h: {}".format(top_left, w, h), "info", color=Color.YELLOW)
         return top_left
 
-    def preview(self,root):
+    '''
+    Function Name:  preview
+    Description:    Generate preview GIFs for each gesture based on the PSD file and save them to a directory.
+    Parameters:     root (str): The root directory where the preview GIFs will be saved.
+    Author:         George Chang
+    '''
+    def preview(self, root):
         tmp = self.psd.composite(layer_filter=lambda layer: layer.is_visible() and layer.kind != 'type')
         revert = ['walk1','walk2','stand1','stand2','alert']
         for key in self.cape.keys():
@@ -258,22 +323,31 @@ class psd_utils:
                     images.append(img)
                 except Exception as e:
                     errcnt+=1
-                    print("load failed")
-                    print(e)
+                    self.send_log("Load failed {}, ERR msg:{}".format(p, e),"error",color=Color.RED)
             folder_path = "{}/preview/".format(root)
             if not os.path.exists(folder_path):
                 os.makedirs(folder_path)
-            images[0].save('{}/{}.gif'.format(folder_path,key), save_all=True, append_images=images[1:], duration=delay, loop=0)    
+            images[0].save('{}/{}.gif'.format(folder_path,key), save_all=True, append_images=images[1:], duration=delay, loop=0)   
+            self.send_log("Save gif file to {}/{}.gif".format(folder_path,key),"info",color=Color.YELLOW) 
 
-    def set_redpoint_left(self):
+    '''
+    Function Name:  set_redpoint_left
+    Description:    Set a red point on the left side of the PSD file for alignment purposes.
+    Author:         George Chang
+    '''
+    def set_redpoint_left(self,position="normal"):
         #原本的位置 x = 142 , y = 136
         x = 142
         y = 136
         offset_x = 20
         offset_y = 23
+        if position == "up":   
+            offset_y = 0
+        elif position == "down":
+            offset_y = 249
         for layer in self.psd:
             if layer.is_group():
-                print(layer)
+                self.send_log("Layer infos: {}".format(layer),"info",color=Color.YELLOW)
                 if "data" in layer.name:
                     for child in layer:
                         if "origin" not in child.name:
@@ -291,20 +365,32 @@ class psd_utils:
                         pixels[sit_y:sit_y+249,sit_x:sit_x+249] = [0, 0, 0, 0]
                         #設定紅點
                         pixels[sit_y+249-offset_y,sit_x+249-offset_x] = [255, 0, 0, 255]
+                        self.send_log("RED point position:{},{}".format(sit_x+249-offset_x,sit_y+249-offset_y),"info",color=Color.YELLOW)
                         #取代原本的圖層
                         result_img = Image.fromarray(pixels)
                         png_layer = pxl.frompil(result_img,psd_file=self.psd,layer_name=child.name,left=0,top=0)
                         self.psd.append(png_layer)
                         png_layer.move_to_group(layer)
                         layer.remove(child)
-                        
-    def set_redpoint_right(self,x,psd):
+
+    '''
+    Function Name:  set_redpoint_right
+    Description:    Set a red point on the right side of the PSD file for alignment purposes.
+    Parameters:     x (int): The x-coordinate for the red point.
+                    psd (PSDImage): The PSD file to modify.
+    Author:         George Chang
+    '''
+    def set_redpoint_right(self, x, psd,position="normal"):
         #原本的位置 x = 142 , y = 136
         offset_x = 21
         offset_y = 23
+        if position == "up":   
+            offset_y = 0
+        elif position == "down":
+            offset_y = 249
         for layer in psd:
             if layer.is_group():
-                print(layer)
+                self.send_log("Layer infos: {}".format(layer),"info",color=Color.YELLOW)
                 if "data" in layer.name:
                     layer.visible=True
                     for child in layer:
@@ -322,7 +408,7 @@ class psd_utils:
                         pixels[sit_y:sit_y+249,sit_x:sit_x+249] = [0, 0, 0, 0]
                         #設定紅點
                         pixels[sit_y+249-offset_y,x-offset_x] = [255, 0, 0, 255]
-                        print("紅點位置:{},{}".format(x-offset_x-sit_x,249-offset_y))
+                        self.send_log("RED point position:{},{}".format(x-offset_x-sit_x,249-offset_y),"info",color=Color.YELLOW)
                         #取代原本的圖層
                         result_img = Image.fromarray(pixels)
                         png_layer = pxl.frompil(result_img,psd_file=psd,layer_name=child.name,left=0,top=0)
@@ -330,46 +416,74 @@ class psd_utils:
                         png_layer.move_to_group(layer)
                         layer.remove(child)
 
-    def make_bigchair(self,pic_path,psd_right):
+    '''
+    Function Name:  make_bigchair
+    Description:    Create a "big chair" by splitting an image into left and right parts and adding them to two PSD files.
+    Parameters:     pic_path (str): The file path of the image to process.
+                    psd_right (PSDImage): The PSD file for the right part of the chair.
+    Author:         George Chang
+    '''
+    def make_bigchair(self, pic_path, psd_right, position="normal"):
         img = Image.open(pic_path).convert("RGBA")
         limited_x=479
         limited_y=250
         #check char size:
         y=img.height
         x=img.width
-        if img.width>limited_x:
-            x=479
-        if img.height > limited_y:
-            y=250
+        if y > limited_y:
+            y = limited_y
         img = img.crop((0,0,x,y)).convert("RGBA")
         # split image
         if x > 250:
             img_left=img.crop((0,0,250,y)).convert('RGBA')
-            img_right=img.crop((251,0,x,y)).convert('RGBA')
+            img_right=img.crop((250,0,x+1,y)).convert('RGBA')
         else:
             img_left=img.crop((0,0,250,y)).convert('RGBA')
         #put pic to cape 
         png_layer_left = pxl.frompil(img_left,psd_file=self.psd,layer_name="chair_left",left=self.cape['sit']['x']*250,top=self.cape['sit']['y']*250+250-y)
         self.psd.append(png_layer_left)
-        self.set_redpoint_left()
+        self.set_redpoint_left(position)
 
         if x > 250:
-            print("Relpace second psd file")
+            self.send_log("Relpace second psd file","info",color=Color.YELLOW)
             #put cap to coat
             png_layer_right = pxl.frompil(img_right,psd_file=psd_right,layer_name="chair_right",left=self.cape['sit']['x']*250+(500-x),top=self.cape['sit']['y']*250+250-y)
             psd_right.append(png_layer_right)
-            self.set_redpoint_right(self.cape['sit']['x']*250+(500-x),psd_right)
+            self.set_redpoint_right(self.cape['sit']['x']*250+(500-x),psd_right,position)
 
-    def classify(self,path,name):
+    def save_horizontal_pic(self, pic_path):
+        self.send_log("Changing horizontal pic".format(pic_path),"info",color=Color.YELLOW)
+        img = Image.open(pic_path).convert("RGBA")
+        #check char size:
+        y=img.height
+        x=img.width
+        if y <250:
+            self.send_log("Image height is too small, please check the image","error",color=Color.RED)
+            return 1
+
+        img = img.crop((0,249,x,y)).convert("RGBA")
+        img.save('chair_btn.png')
+        self.send_log("Save chair_btn.png","info",color=Color.YELLOW)
+        return 0
+        # split image
+        
+
+    '''
+    Function Name:  classify
+    Description:    Classify images into different gesture categories based on similarity to predefined templates.
+    Parameters:     path (str): The directory path containing images to classify.
+                    name (str): The name of the gesture to classify.
+    Author:         George Chang
+    '''
+    def classify(self, path, name):
         lists = os.listdir(path)
         tmp = []
         for l in lists:
             if name in l and "png" in l and "json" not in l:
                 tmp.append(l)
         if len(tmp) == self.cape[name]['block']:
-            print("No multiple pic exists, no need to classify")
+            self.send_log("All pic exists, no need to classify","info",color=Color.YELLOW)
             return 0
-        print(tmp)
         # 取得各動作有哪些圖片作為templete 並且使用skimage 來分類，分類的資料到相應資料夾後取出隨機一張作為那個動作的代表動作
         #取出模板圖片
         cape_x = self.cape[name]['x']
@@ -380,10 +494,9 @@ class psd_utils:
             # 建立分類資料夾
             folder_path = "{}/{}_{}".format(path,name,i)
             if os.path.exists(folder_path):
-                print(f"資料夾 {folder_path} 已存在，正在刪除...")
+                self.send_log("Remove folder {}".format(folder_path),"info",color=Color.YELLOW)
                 shutil.rmtree(folder_path)
             os.makedirs(folder_path)
-            print("load gesture templete")
             # 建立每個動作的templete
             img = self.orgcanvas.crop(((cape_x+i)*250,(cape_y*250),(cape_x+i+1)*250,(cape_y+1)*250))
             templete[i]=img
@@ -410,17 +523,38 @@ class psd_utils:
             except Exception as e:
                 print("process {} failed, {}".format(element,e))
 
+    '''
+    Function Name:  calculate_similarity
+    Description:    Calculate the structural similarity (SSIM) between two images.
+    Parameters:     image1 (Image): The first image.
+                    image2 (Image): The second image.
+    Returns:        float: The SSIM score between the two images.
+    Author:         George Chang
+    '''
     def calculate_similarity(self, image1, image2):
-        """計算兩張圖片的相似度（SSIM）"""
         score, _ = ssim(np.squeeze(np.array(image1)), np.squeeze(np.array(image2)),win_size=3, full=True)
         return score
     
-    def load_json(self,path):
-        print("Load Json file {}".format(path))
+    '''
+    Function Name:  load_json
+    Description:    Load a JSON file from the specified path and return its content as a Python dictionary.
+    Parameters:     path (str): The file path of the JSON file to load.
+    Returns:        dict: The loaded JSON data.
+    Author:         George Chang
+    '''
+    def load_json(self, path):
+        self.send_log("Load Json file {}".format(path),"info",color=Color.GREEN)
         with open(path, 'r') as file:
             data = json.load(file)
         return data
 
+    '''
+    Function Name:  load_mapleson_png_with_json
+    Description:    Load PNG and JSON files from a directory, organize them by gesture, and process them based on predefined configurations.
+    Parameters:     path (str): The directory path containing PNG and JSON files.
+    Returns:        dict: A dictionary mapping gestures to their corresponding PNG files.
+    Author:         George Chang
+    '''
     def load_mapleson_png_with_json(self, path):
         lists = os.listdir(path)
         images = {}
@@ -438,34 +572,34 @@ class psd_utils:
                 if ".png" in l:
                     images[l.split('-')[sign_count-1]]['gesture'].append(l)
             except Exception as e:
-                print("Init {} failed, no such key in PSD, errmesg:{}".format(l,e))
+                self.send_log("[SKIP]Not json or png file: {}".format(l),"warning",color=Color.MAGENTA)
         # print(images.keys())
         #選擇是要使用哪些圖片
-        print("\n\n")
         for key in images.keys():
-            print("Choose {}".format(key))
-            js = self.load_json("{}/{}".format(path,images[key]['json']))
+            self.send_log("Choose {}".format(key),"info",color=Color.GREEN)
+            try:
+                js = self.load_json("{}/{}".format(path,images[key]['json']))
+            except Exception as e:
+                self.send_log("Unable to load {}, skip to next gesture".format(key),"warning",color=Color.MAGENTA)
+                continue
             self.js[key] = []
             block = self.cape[key]['block']
             delays = self.cape[key]['delay']
             pic_lists = images[key]['gesture']
             #重整排續
             pic_lists = sorted(pic_lists, key=lambda x: int(x.split('-')[-1].split('.')[0]))
-            print(pic_lists)
             delay = 0
             pic_index = 0
             pics = []
             for b in range(block):
                 #choose block's pic
-                print("--------- Choise {}_{}".format(key,b))
+                self.send_log("-------- {}_{}".format(key,b),"info",color=Color.BLUE)
                 for i in range(pic_index,len(pic_lists)):
                     if len(pics) == 0:
                         delay += js[i]['delay']
-                        
                         pics.append(pic_lists[i])
                         tmp = {'x':js[i]['x'],'y':js[i]['y']}
                         self.js[key].append(tmp)
-                        
                         pic_index+=1
                         break
                     else:
@@ -482,11 +616,9 @@ class psd_utils:
                         pic_index+=1
                         
             pics = sorted(pics, key=lambda x: int(x.split('-')[-1].split('.')[0]))
-            print(pics)
-            print("\n")
             pic_arr[key]=pics
         return pic_arr
-              
 
 
-    
+
+

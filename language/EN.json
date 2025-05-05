@@ -1,0 +1,20 @@
+{
+    "menu_title": "Current Functions",
+    "option_auto_align": "1. Auto Align",
+    "option_convert_psd_to_gif": "2. Convert PSD to GIF",
+    "option_make_big_chair_2": "3. Make Big Chair (With two equipments, 479X250)",
+    "option_make_big_chair_4": "4. Make Big Chair (With four equipments, 479X499)",
+    "option_exit": "0. Exit",
+    "prompt_enter_choice": "Please enter the function number: ",
+    "prompt_enter_filename": "Enter the file name: ",
+    "prompt_enter_psd_filename": "Enter the base PSD file name (another file will use Avatar_Longcoat.psd in the src folder): ",
+    "prompt_enter_chair_image": "Enter the chair image name (the chair width should exceed 250 pixels): ",
+    "error_file_not_found": "File {} not found in {}",
+    "info_auto_align_selected": "You selected the Auto Align function",
+    "info_convert_psd_to_gif_selected": "You selected the Convert PSD to GIF function (it is recommended to merge the layers first to speed up loading time, and make sure the layers in the PSD file are aligned)",
+    "info_make_big_chair_selected": "You selected the Make Big Chair function",
+    "info_exit_program": "Exiting the program",
+    "error_invalid_choice": "Invalid choice, please re-enter.",
+    "prompt_press_enter_to_exit": "prompt_press_enter_to_exit",
+    "prompt_enter_2nd_psd_filename": "Enter the second PSD file name(Default:src/Avatar_Longcoat.psd):"
+}

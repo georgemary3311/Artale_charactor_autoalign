@@ -43,7 +43,7 @@
 ## 注意事項
 1. 因為對齊圖片是使用open cv的matchTemplate 去做對齊，所以如果腳色過於複雜 PSD檔案中的位置會有誤，請自行調整
    
-2.1 EXE FILE 下載路徑:[Google Drive](https://drive.google.com/file/d/1h1rTRnMHGyzBWclMnHIEhjp5hiuCaLf-/view?usp=sharing)
+2.1 EXE FILE 下載路徑:[Google Drive](https://drive.google.com/drive/folders/1L3WprF8cyESB7CdYgiiexKBZPfNlOL9I?usp=sharing)
 
 2.2 下載後放到與main.py相同的資料夾之後如上述使用方法執行
 
@@ -55,12 +55,15 @@ https://youtube.com/live/c2HatnjVlcE
 如果沒有photoshop，我是用https://krita.org/zh-tw/
 
 ## 更新Note:
-20250125
-Known issue
-1. If making chair's pic width over 479, will fail. Current code do fix it. But the EXE file won't update yet. 
 20241216
 1. 支援psd to gif
 2. 支援大椅子(兩件裝備)的製作
 20241215:
 1. 支援maplesalon自動判斷檔名
-
+20250505
+1. Fix maplesalon stabtf failed issue
+2. Support multiple language
+3. Fix two equip chair making offset
+4. Support four equips chair making
+5. Change Reading file by entering option
+6. Support recording log

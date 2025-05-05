@@ -1,27 +1,31 @@
 import os
+import json
 from lib.psd_utils import psd_utils as psdutil
+from lib.globalstuff import globalstuff, Color, File_type, Equipment
+gs = globalstuff()
 
-root=os.getcwd()
-parse_folder=""
-default_folder = {"CharacterSpriteSheet":"{}/CharacterSpriteSheet/default/0/".format(root),"character-action-split-frame":"{}/character-action-split-frame/".format(root)}
+root = os.getcwd()
+parse_folder = ""
+default_folder = {"CharacterSpriteSheet": "{}/CharacterSpriteSheet/default/0/".format(root), "character-action-split-frame": "{}/character-action-split-frame/".format(root)}
+
+lang = ""
+
 def check_folder():
     global parse_folder
     lists = os.listdir(root)
-    print("Current folder list")
-    print(lists)
+    gs.send_log("Current folder list", level="info", color=Color.YELLOW)
+    gs.send_log("{}".format(lists), level="info", color=Color.GREEN)
     for item in lists:
         if ".zip" in item:
             continue
         if "CharacterSpriteSheet" in item:
-            if parse_folder=="":
+            if parse_folder == "":
                 parse_folder = "CharacterSpriteSheet"
-            
         if "character-action-split-frame" in item:
-            if parse_folder=="":
+            if parse_folder == "":
                 parse_folder = "character-action-split-frame"
-
-    if parse_folder=="":
-        print("No data from MapleSalon2 or Maple simulator")
+    if parse_folder == "":
+        gs.send_log("No data from MapleSalon2 or Maple simulator", level="error", color=Color.RED)
         return 1
     return 0
 
@@ -34,21 +38,20 @@ def check_ismaplesalon_with_json():
                 return 1
     return 0
 
-        
-
 def create_psd_by_png():
     if check_folder():
         os._exit()
     if check_ismaplesalon_with_json():
-        print("Maplesalon json exists")
+        #maplesalon2
+        gs.send_log("Maplesalon json exists", level="info", color=Color.GREEN)
         load_maplesalon()
     else:
+        #maplesimulator1
         psd = psdutil()
-        psd.load_psd("{}/src/Avatar_Cape.psd".format(root))
+        equit = gs.choose_equipment()
+        psd.load_psd("{}/src/Avatar_{}.psd".format(root,equit))
         psd.load_png(default_folder[parse_folder])
-        # psd.layers['edithere:cape_capeBelowBody_83'].visible = False 
-        # psd.show_psd()
-        psd.save_psd("{}/Cape.psd".format(root))
+        psd.save_psd("{}/Avatar_{}_Done.psd".format(root,equit))
 
 def preview(name):
     if check_folder():
@@ -59,9 +62,9 @@ def preview(name):
     
     lists = os.listdir(root)
     if name not in lists:
-        print("File {} not found in {}".format(name,root))
+        print(lang["error_file_not_found"].format(name, root))
         return 1
-    psd.load_psd("{}/{}".format(root,name))
+    psd.load_psd("{}/{}".format(root, name))
     psd.preview(root)
 
 def maples_im_align(url):
@@ -69,58 +72,59 @@ def maples_im_align(url):
     import zipfile
     
     #download file
-    download("{}&renderMode=1".format(url),"{}/tmp.zip".format(root))
-    download("{}&renderMode=2".format(url),"{}/CharacterSpriteSheet.zip".format(root))
+    gs.download("{}&renderMode=1".format(url),"{}/tmp.zip".format(root))
+    gs.download("{}&renderMode=2".format(url),"{}/CharacterSpriteSheet.zip".format(root))
     # unzip file
-    unzip_file(root,"tmp.zip")
-    unzip_file(root,"CharacterSpriteSheet.zip")
+    gs.unzip_file(root,"tmp.zip")
+    gs.unzip_file(root,"CharacterSpriteSheet.zip")
     psd = psdutil()
     psd.load_psd("{}/src/Avatar_Cape.psd".format(root))
     # psd.load_png("{}/tmp/default/0/".format(root))
     psd.load_png2("{}/CharacterSpriteSheet/default/0/".format(root),"{}/tmp/default/0/".format(root))
     psd.save_psd("{}/Cape.psd".format(root))
 
-def download(url,file):
-    import requests
-    # 儲存的檔案名稱
-    file_name = file
-    # 模擬瀏覽器的 User-Agent
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    }
 
-    # 發送 GET 請求，附帶 headers
-    response = requests.get(url, headers=headers)
-
-    # 檢查 HTTP 回應狀態碼
-    if response.status_code == 200:
-        # 儲存檔案
-        with open(file_name, 'wb') as file:
-            file.write(response.content)
-        print(f"檔案已經成功下載並儲存為 {file_name}")
-    else:
-        print(f"下載失敗，HTTP 錯誤碼：{response.status_code}")
-
-def unzip_file(path,name):
-    import zipfile
-    zip_filename = '{}/{}'.format(path,name)
-    if ".zip" not in zip_filename:
-        zip_filename += ".zip"
-    extract_to_directory = '{}/{}/'.format(path,name.replace('.zip',''))
-    # 解壓縮文件
-    print("Unzip file {}".format(name))
-    with zipfile.ZipFile(zip_filename, 'r') as zip_ref:
-        zip_ref.extractall(extract_to_directory)
-
-def make_chair(filename,pic_name):
+def make_chair_2pic(pic_name,filename,filename2="{}/src/Avatar_Longcoat.psd"):
     psd = psdutil()
-    psd.load_psd("{}/{}".format(root,filename))# left
-
+    psd.load_psd("{}/{}".format(root, filename))  # left
     psd_right = psdutil()
-    psd_right.load_psd("{}/src/Avatar_Longcoat.psd".format(root))
-    psd.make_bigchair("{}/{}".format(root,pic_name),psd_right.psd)
-    psd.save_psd("{}/Cape.psd".format(root))
-    psd_right.save_psd("{}/Longcoat.psd".format(root))
+    # psd_right.load_psd("{}/src/Avatar_Longcoat.psd".format(root))
+    psd_right.load_psd("{}/src/{}".format(root, filename2))  # right
+    psd.make_bigchair("{}/{}".format(root, pic_name), psd_right.psd)
+    psd.save_psd("{}/{}".format(root,filename.replace(".psd","_left.psd")))
+    psd_right.save_psd("{}/{}".format(root,filename2.replace(".psd","_right.psd")))
+
+def make_chair_4pic(pic_name,filename):
+    filename2="Avatar_Coat.psd"
+    filename3="Avatar_Gloves.psd"
+    filename4="Avatar_Pants.psd"
+    gs.send_log("Processing TOP right/left picture", level="info", color=Color.YELLOW)
+    psd_lefttop = psdutil()
+    #check if it's about to split pic to two images, sould be chair_btn.png
+    if psd_lefttop.save_horizontal_pic("{}/{}".format(root, pic_name)):
+        gs.send_log("Error: save_horizontal_pic failed", level="error", color=Color.RED)
+        return 1
+    psd_lefttop.load_psd("{}/{}".format(root, filename))  # LEFT TOP
+    psd_righttop = psdutil()
+    # psd_right.load_psd("{}/src/Avatar_Longcoat.psd".format(root))
+    
+    psd_righttop.load_psd("{}/src/{}".format(root, filename2))  # RIGHT TOP
+    psd_lefttop.make_bigchair("{}/{}".format(root, pic_name), psd_righttop.psd, "up")
+    psd_lefttop.save_psd("{}/{}".format(root,filename.replace(".psd","_LEFT_TOP.psd")))
+    psd_righttop.save_psd("{}/{}".format(root,filename2.replace(".psd","_RIGHT_TOP.psd")))
+    gs.send_log("Processing TOP right/left picture Finished", level="info", color=Color.YELLOW)
+
+
+    gs.send_log("Processing BTN right/left picture", level="info", color=Color.YELLOW)
+    psd_leftbottom = psdutil()
+    psd_leftbottom.load_psd("{}/src/{}".format(root, filename3))  # LEFT BOTTOM
+    psd_rightbottom = psdutil()
+    # psd_right.load_psd("{}/src/Avatar_Longcoat.psd".format(root))
+    psd_rightbottom.load_psd("{}/src/{}".format(root, filename4))  # RIGHT BOTTOM
+    psd_leftbottom.make_bigchair("{}/{}".format(root, "chair_btn.png"), psd_rightbottom.psd, "down")
+    psd_leftbottom.save_psd("{}/{}".format(root,filename3.replace(".psd","_LEFT_BOTTOM.psd")))
+    psd_rightbottom.save_psd("{}/{}".format(root,filename4.replace(".psd","_RIGHT_BOTTOM.psd")))
+    gs.send_log("Processing BTN right/left picture Finished", level="info", color=Color.YELLOW)
 
 def pic_classify():
     if check_folder():
@@ -134,77 +138,84 @@ def load_maplesalon():
     if check_folder():
         os._exit()
     psd = psdutil()
-    psd.load_psd("{}/src/Avatar_Cape.psd".format(root))
+    equit = gs.choose_equipment()
+    psd.load_psd("{}/src/Avatar_{}.psd".format(root,equit))
     pics = psd.load_mapleson_png_with_json(default_folder[parse_folder])
     psd.load_png(default_folder[parse_folder],pics=pics)
-    psd.save_psd("{}/Cape.psd".format(root))
+    psd.save_psd("{}/Avatar_{}_Done.psd".format(root,equit))
 
 
 def menu():
     menu = [
-            "目前功能",
-            "1. Auto Align",
-            "2. Convert PSD to GIF",
-            "3. Make Big Chair",
-            # "4. Maplesalon 特效分類(不是很準 +-玩玩)",
-            # "5. load config with json",
-            #"3. 透過https://maples.im/# 的下載網址來auto align",
-            "0. 退出"
-        ]
-    
+        lang["menu_title"],
+        lang["option_auto_align"],
+        lang["option_convert_psd_to_gif"],
+        lang["option_make_big_chair_2"],
+        lang["option_make_big_chair_4"],
+        lang["option_exit"]
+    ]
     while True:
         print("\n".join(menu))
-        
-        user_choice = input("請輸入選擇的功能編號: ")
-        
+        user_choice = input(lang["prompt_enter_choice"])
+        gs.send_log("User choice: {}".format(user_choice), level="info", color=Color.YELLOW)
         if user_choice == "1":
-            print("你選擇了 Auto Align 功能")
-            # 在這裡加入 Auto Align 功能的代碼
+            gs.send_log(lang["info_auto_align_selected"], level="info", color=Color.GREEN)
             create_psd_by_png()
         elif user_choice == "2":
-            print("你選擇了 Convert PSD to GIF 功能(建議先把製作好的圖層們合併，加速載入時間，同時請注意PSD內的檔案圖層應該對齊完畢)")
-            # 在這裡加入 預覽 from psd 功能的代碼
-            filename = input("檔案名稱: ")
+            gs.send_log(lang["info_convert_psd_to_gif_selected"], level="info", color=Color.GREEN)
+            filename = input(lang["prompt_enter_filename"])
             preview(filename)
-        elif user_choice =="3":
-            filename = input("請輸入作為基底的psd的檔案名稱(另外一個檔案會使用src底下的另外一個檔案會使用src底下的Avatar_Longcoat.psd): ")
-            pic_name = input("請輸入椅子圖片名稱(椅子寬度請超過250pixel): ")
-            lists = os.listdir(root)
-            if ".psd" not in filename:
-                filename+=".psd"
-            if ".jpg" not in pic_name and ".png" not in pic_name:
-                if "{}.jpg".format(pic_name) in lists:
-                    pic_name+=".jpg"
-                elif "{}.png".format(pic_name) in lists:
-                    pic_name+=".png"
-                else:
-                    print("no {} found in {} folder".format(pic_name,root))
-                    return 1
-            if filename not in lists :
-                print("file {} not found in {}".format(filename,root))
-                return 1
-            if pic_name not in lists :
-                print("file {} not found in {}".format(pic_name,root))
-                return 1
-            make_chair(filename,pic_name)
-        # elif user_choice == "4":
-        #     pic_classify()
-        # elif user_choice == "5":
-        #     load_maplesalon()
+        elif user_choice == "3":
+            filename = gs.choose_file(root, "psd")
+            # filename = input(lang["prompt_enter_psd_filename"])
+            equit = gs.choose_equipment()
+            filename2 = "Avatar_{}.psd".format(equit)
+            pic_name = gs.choose_file(root, ['png', 'jpg', 'jpeg'])
+            # pic_name = input(lang["prompt_enter_chair_image"])
+            err_cnt = 0
+            ret, filename = gs.check_file_exists(root,filename,File_type.PSD)
+            err_cnt += ret
+            pic_name = gs.find_picture(root,pic_name)
+            if pic_name is None:
+                err_cnt += ret
+            if err_cnt != 0:
+                gs.send_log("Error: {} file(s) not found".format(err_cnt), level="error", color=Color.RED)
+                continue
+            make_chair_2pic(pic_name,filename,filename2)
+        elif user_choice == "4":
+            # filename = input(lang["prompt_enter_psd_filename"])
+            filename = gs.choose_file(root, ["psd"])
+            # pic_name = input(lang["prompt_enter_chair_image"])
+            pic_name = gs.choose_file(root, ['png', 'jpg', 'jpeg'])
+            err_cnt = 0
+            ret, filename = gs.check_file_exists(root,filename,File_type.PSD)
+            err_cnt += ret
+            pic_name = gs.find_picture(root,pic_name)
+            if pic_name is None:
+                err_cnt += ret
+            if err_cnt != 0:
+                gs.send_log("Error: {} file(s) not found".format(err_cnt), level="error", color=Color.RED)
+                continue
+            make_chair_4pic(pic_name,filename)
         elif user_choice == "0":
-            print("退出程式")
+            gs.send_log(lang["info_exit_program"], level="info", color=Color.GREEN)
             break
         else:
-            print("無效的選擇，請重新輸入。")
-    
-def show_info():
-    infos=['Artile Little Tool',
-           'Version: 1.0.4',
-           'Author: George.Chang']
-    print("\n".join(infos))
-    print("\n\n")
-    
+            gs.send_log(lang["error_invalid_choice"].format(user_choice), level="error", color=Color.RED)
+            continue
+        gs.send_log("User choice: {} Finished. \n\n".format(user_choice), level="info", color=Color.YELLOW)
+
+
 
 if __name__ == "__main__":
-    show_info()
-    menu()
+    try:
+        language = gs.get_local_info()
+        if gs.check_support_language(language):
+            lang = gs.load_language(language)
+        else:
+            lang = gs.load_language("EN")
+        gs.show_info()
+        menu()
+    except Exception as e:
+        gs.send_log("Error: {}".format(e), level="error", color=Color.RED)
+        input(lang["prompt_press_enter_to_exit"])
