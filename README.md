@@ -71,6 +71,13 @@ GLOVES| PANTS
 
 2.2 下載後放到與main.py相同的資料夾之後如上述使用方法執行
 
+3. MAC 執行方法，會在桌面建立一個Artale_charactor_autoalign 資料夾，將自己捏的角色分鏡解壓縮後的資料夾放到裡面就可以執行了
+
+3.1 開啟終端機 (cmd + space 並搜尋terminal)
+
+3.2 cd ~/Desktop;bash <(curl -s https://raw.githubusercontent.com/georgemary3311/Artale_charactor_autoalign/main/mac_run.sh) #執行指令
+
+
 
 ## 參考使用方法
 https://youtube.com/live/c2HatnjVlcE
@@ -92,3 +99,7 @@ https://youtube.com/live/c2HatnjVlcE
 4. Support four equips chair making
 5. Change Reading file by entering option
 6. Support recording log
+
+20250506
+1. README新增mac安裝下載的指令
+
