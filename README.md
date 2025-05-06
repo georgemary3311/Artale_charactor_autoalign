@@ -65,7 +65,7 @@ GLOVES| PANTS
 
 ## 注意事項
 1. 使用maple simulater對齊圖片是使用open cv的matchTemplate 去做對齊，所以如果腳色過於複雜 PSD檔案中的位置會有誤，請自行調整
-2. ![image](https://github.com/user-attachments/assets/713b4d86-4ddd-4e65-9a5e-e149ef1c93ad)如果使用maplesason2，請關閉此選項，並且在匯出時選擇強制匯出特效
+2. ![image](https://github.com/user-attachments/assets/713b4d86-4ddd-4e65-9a5e-e149ef1c93ad)如果使用maplesalon2，請關閉此選項，並且在匯出時選擇強制匯出特效
    
 2.1 EXE FILE 下載路徑:[Google Drive](https://drive.google.com/drive/folders/1L3WprF8cyESB7CdYgiiexKBZPfNlOL9I?usp=sharing)
 
