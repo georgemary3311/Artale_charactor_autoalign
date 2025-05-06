@@ -75,7 +75,7 @@ GLOVES| PANTS
 
 3.1 開啟終端機 (cmd + space 並搜尋terminal)
 
-3.2 cd ~/Desktop;bash <(curl -s https://raw.githubusercontent.com/georgemary3311/Artale_charactor_autoalign/main/mac_run.sh) #執行指令
+3.2 ```cd ~/Desktop;bash <(curl -s https://raw.githubusercontent.com/georgemary3311/Artale_charactor_autoalign/main/mac_run.sh) #執行指令```
 
 
 
