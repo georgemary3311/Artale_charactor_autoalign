@@ -13,18 +13,18 @@
 2. 把程式碼下載下來 把行走圖解壓縮放到與程式同個資料夾
 3. 根據執行方法可以選擇以下兩種，python程式執行或是執行檔
 
-3.1 執行 python main.py 並選擇選項一
+3.1 執行 python main.py 並選擇選項1(如果是maplestory simulater可以使用選項2)
 
-3.2 執行 Autoalign.exe 選擇選項一
+3.2 執行 Autoalign.exe 選擇選項1(如果是maplestory simulater可以使用選項2)
 4. 目前可以選擇使用的檔案，來源於src資料夾
 5. 會生成XXX_DONE.psd，跑完後再打開來檢查是否有對齊完成
 
 ### GIF生成
 1. 根據執行方法可以選擇以下兩種，python程式執行或是執行檔
 
-1.1 執行 python main.py 並選擇選項二
+1.1 執行 python main.py 並選擇選項3
 
-1.2 執行 Autoalign.exe 選擇選項二
+1.2 執行 Autoalign.exe 選擇選項3
 
 2. 輸入需要轉換成gif的PSD檔案名稱(PSD檔案建議先把圖層合好，會節省時間)
 3. 即會生成PREVIEW資料夾
@@ -33,9 +33,9 @@
 參考影片:https://youtu.be/0pxWmT5UbOw
 1. 根據執行方法可以選擇以下兩種，python程式執行或是執行檔
 
-1.1 執行 python main.py 並選擇選項三
+1.1 執行 python main.py 並選擇選項4
 
-1.2 執行 Autoalign.exe 選擇選項三
+1.2 執行 Autoalign.exe 選擇選項4
 
 2. 選擇要使用的PSD檔案
    
@@ -46,9 +46,9 @@
 ### 製作大椅子(四張圖片版本)
 1. 根據執行方法可以選擇以下兩種，python程式執行或是執行檔
 
-1.1 執行 python main.py 並選擇選項四
+1.1 執行 python main.py 並選擇選項5
 
-1.2 執行 Autoalign.exe 選擇選項四
+1.2 執行 Autoalign.exe 選擇選項5
 
 2. 選擇要使用的PSD檔案(建議使用Cape)
  
@@ -102,4 +102,8 @@ https://youtube.com/live/c2HatnjVlcE
 
 20250506
 1. README新增mac安裝下載的指令
+
+20250510
+1. Fix color display in windows
+2. Provides more precise alignment to maplestory simulater
 

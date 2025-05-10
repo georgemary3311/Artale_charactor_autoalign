@@ -11,6 +11,7 @@ from psd_tools.api.layers import PixelLayer as pxl
 from psd_tools.api.layers import Group as gp
 from lib.globalstuff import globalstuff
 from lib.globalstuff import Color
+import matplotlib.pyplot as plt
 
 class psd_utils(globalstuff):
     '''
@@ -48,7 +49,7 @@ class psd_utils(globalstuff):
             'fly':{'x':5,'y':5,'block':2, 'delay':[300,300], 'offsetx':[138,142], 'offsety':[150,150 ]},
             'shoot1':{'x':5,'y':6,'block':3, 'delay':[300,150,350], 'offsetx':[144,144,144], 'offsety':[150,150,150]},
             'shoot2':{'x':5,'y':7,'block':5, 'delay':[160,160,250,100,150], 'offsetx':[143,143,143,143,143], 'offsety':[150,150,150,150,150]},
-            'swingP1':{'x':5,'y':9,'block':3, 'delay':[300,150,350], 'offsetx':[134,147,146,], 'offsety':[150,150,150]},
+            'swingP1':{'x':5,'y':9,'block':3, 'delay':[300,150,350], 'offsetx':[134,147,146], 'offsety':[150,150,150]},
             'swingP2':{'x':5,'y':10,'block':3, 'delay':[300,150,350], 'offsetx':[143,143,141], 'offsety':[150,150,150]},
             'swingPF':{'x':5,'y':11,'block':4, 'delay':[100,200,200,200], 'offsetx':[135,137,151,178], 'offsety':[150,150,166,150]},
             'stabOF':{'x':5,'y':12,'block':3, 'delay':[250,150,300], 'offsetx':[139,151,162], 'offsety':[150,152,150]},
@@ -58,6 +59,40 @@ class psd_utils(globalstuff):
             'jump':{'x':8,'y':5,'block':1, 'delay':[500], 'offsetx':[137], 'offsety':[150]},
             'shootF':{'x':9,'y':6,'block':2, 'delay':[300,150,250], 'offsetx':[144,141], 'offsety':[150,150]},
             'sit':{'x':10,'y':11,'block':1, 'delay':[500], 'offsetx':[144], 'offsety':[153]}}
+        
+        self.maple_simu = {'walk1':{'x':0,'y':0,'block':4, 'delay':[180,180,180,180], 'offsetx':[77,80,77,75], 'offsety':[61,61,61,62]},
+            'walk2':{'x':0,'y':1,'block':4, 'delay':[180,180,180,180], 'offsetx':[83,80,83,81], 'offsety':[62,63,61,63]},
+            'stand1':{'x':0,'y':2,'block':3, 'delay':[500,500,500], 'offsetx':[80,79,78], 'offsety':[62,62,62]},
+            'stand2':{'x':0,'y':3,'block':3, 'delay':[500,500,500], 'offsetx':[81,81,81], 'offsety':[62,62,62]},
+            'alert':{'x':0,'y':4,'block':3, 'delay':[500,500,500], 'offsetx':[88,88,88], 'offsety':[64,63,62]},
+            'swingO1':{'x':0,'y':5,'block':3, 'delay':[300,150,350], 'offsetx':[84,93,74], 'offsety':[66,62,66]},
+            'swingO2':{'x':0,'y':6,'block':3, 'delay':[300,150,350], 'offsetx':[88,84,76], 'offsety':[62,62,64]},
+            'swingO3':{'x':0,'y':7,'block':3, 'delay':[300,150,350], 'offsetx':[65,92,84], 'offsety':[66,63,66]},
+            'swingOF':{'x':0,'y':8,'block':4, 'delay':[200,100,100,300], 'offsetx':[82,83,83,76], 'offsety':[62,52,59,61]},
+            'swingT1':{'x':0,'y':9,'block':3, 'delay':[300,150,350], 'offsetx':[77,84,73], 'offsety':[62,62,65]},
+            'swingT2':{'x':0,'y':10,'block':3, 'delay':[300,150,350], 'offsetx':[84,74,75], 'offsety':[56,62,65]},
+            'swingT3':{'x':0,'y':11,'block':3, 'delay':[300,150,350], 'offsetx':[83,84,74], 'offsety':[62,68,53]},
+            'swingTF':{'x':0,'y':12,'block':4, 'delay':[200,150,150,200], 'offsetx':[95,90,85,70], 'offsety':[45,52,63,65]},
+            'ladder':{'x':0,'y':13,'block':2, 'delay':[250,250], 'offsetx':[81,79], 'offsety':[50,50]},
+            
+            'stabO1':{'x':5,'y': 0,'block':2, 'delay':[350,450], 'offsetx':[73,90], 'offsety':[64,66]},
+            'stabT1':{'x':5,'y':1,'block':3, 'delay':[300,100,350], 'offsetx':[85,80,69], 'offsety':[61,64,68]},
+            'stabT2':{'x':5,'y':2,'block':3, 'delay':[300,100,350], 'offsetx':[86,79,77], 'offsety':[61,64,67]},
+            'proneStab':{'x':5,'y':3,'block':2, 'delay':[300,400], 'offsetx':[68,68], 'offsety':[78,78]},
+            'stabTF':{'x':5,'y':4,'block':3, 'delay':[100,200,200,200], 'offsetx':[ 77,77,91], 'offsety':[61,61,50]},
+            'fly':{'x':5,'y':5,'block':2, 'delay':[300,300], 'offsetx':[88,92], 'offsety':[56,56 ]},
+            'shoot1':{'x':5,'y':6,'block':3, 'delay':[300,150,350], 'offsetx':[75,75,75], 'offsety':[62,62,62]},
+            'shoot2':{'x':5,'y':7,'block':5, 'delay':[160,160,250,100,150], 'offsetx':[81,81,81,81,83], 'offsety':[63,63,63,63,63]},
+            'swingP1':{'x':5,'y':9,'block':3, 'delay':[300,150,350], 'offsetx':[77,71,73], 'offsety':[62,62,65]},
+            'swingP2':{'x':5,'y':10,'block':3, 'delay':[300,150,350], 'offsetx':[87,74,75], 'offsety':[45,50,65]},
+            'swingPF':{'x':5,'y':11,'block':4, 'delay':[100,200,200,200], 'offsetx':[66,68,83,90], 'offsety':[65,66,50,65]},
+            'stabOF':{'x':5,'y':12,'block':3, 'delay':[250,150,300], 'offsetx':[93,60,64], 'offsety':[67,61,66]},
+            'rope':{'x':5,'y':13,'block':2, 'delay':[250,250], 'offsetx':[82,82], 'offsety':[50,63]},
+            
+            'stabO2':{'x':8,'y': 0,'block':2, 'delay':[350,450], 'offsetx':[74,92], 'offsety':[60,66]},
+            'jump':{'x':8,'y':5,'block':1, 'delay':[500], 'offsetx':[77], 'offsety':[63]},
+            'shootF':{'x':9,'y':6,'block':2, 'delay':[300,150,250], 'offsetx':[74,69], 'offsety':[57,58]},
+            'sit':{'x':10,'y':11,'block':1, 'delay':[500], 'offsetx':[87], 'offsety':[68]}}
 
     '''
     Function Name:  load_psd
@@ -223,38 +258,50 @@ class psd_utils(globalstuff):
         errcnt=0
         png_path=""
         png_path = "{}/{}_{}.png"
+        group = gp.new(name="Group_Artale")
+        self.psd.append(group)
+        group2 = gp.new(name="Group_Artale_tmp")
+        # self.psd.append(group2)
         for key in self.cape.keys():
+            self.send_log(f"Loading {key}","info",Color.BLUE)
             cape_x = self.cape[key]['x']
             cape_y = self.cape[key]['y']
             blocks = self.cape[key]['block']
             # load correspond pic and put to psd
             for i in range(blocks):
+                if key == "stabTF" and i !=2:
+                    continue
                 try:
-                    self.send_log("Load png : {}/{}_{}.png".format(path,key,i),"info",color=Color.YELLOW)
+                    self.send_log("Load png : {}/{}_{}.png".format(path,key,i),"info",color=Color.GREEN)
                     png_image = Image.open(png_path.format(path,key,i)).convert("RGBA")
-                    self.send_log("Load png : {}/{}_{}.png".format(tmp_path,key,i),"info",color=Color.YELLOW)
+                    self.send_log("Load png : {}/{}_{}.png".format(tmp_path,key,i),"info",color=Color.GREEN)
                     tmp_img = Image.open(png_path.format(tmp_path,key,i)).convert("RGBA")
-                    #因為有些output的圖片更大 比預計的格子還大 所以動態調整
-                    offset0 = 0
-                    offset1 = 0
-                    if png_image.width >=250:
-                        offset0 = png_image.width - 250
-                    if png_image.height >=250:
-                        offset1 = png_image.height - 250
-                    self.send_log("Load PNG {}, offset {},{}".format(png_path.format(path,key,i),offset0,offset1),"info",color=Color.YELLOW)
+                    # x,y = self.get_offset(png_image,tmp_img.crop((0,0,tmp_img.width/2,tmp_img.height/2)))
+
+
+                    # 先把小圖貼到psd上面，再拿大圖與PSD比對
+                    # img = self.orgcanvas.crop(((cape_x+i)*250,(cape_y*250),(cape_x+i+1)*250,(cape_y+1)*250)).convert("RGBA")
+                    # img.paste(tmp_img,(self.maple_simu[key]['offsetx'][i],self.maple_simu[key]['offsety'][i]))
+                    # img.save('{}/0_{}_{}.png'.format(tmp_path,key,i))
+                    # x,y = self.get_offset(img,png_image)
+                    # png_layer = pxl.frompil(png_image,psd_file=self.psd,layer_name="{}_{}".format(key,i),left=(cape_x+i)*250+x,top=(cape_y)*250+y)
                     
-                    img = self.orgcanvas.crop(((cape_x+i)*250,(cape_y*250),(cape_x+i+1)*250+offset0,(cape_y+1)*250+offset1)).convert("RGBA")
-                    img.paste(tmp_img,(77,61))
-                    img.save('{}/0_{}_{}.png'.format(tmp_path,key,i))
-                    x,y = self.get_offset(img,png_image)
-                    png_layer = pxl.frompil(png_image,psd_file=self.psd,layer_name="{}_{}".format(key,i),left=(cape_x+i)*250+x,top=(cape_y)*250+y)
+                    # 先配對小圖在大圖的位置，再用小圖的絕對位置尋找正確位置
+                    if tmp_img.height>png_image.height:
+                        x,y = self.get_offset(png_image,tmp_img.crop((0,0,tmp_img.width,png_image.height-2)))   
+                    else: 
+                        x,y = self.get_offset(png_image,tmp_img.crop((0,0,tmp_img.width,tmp_img.height-2)))
+                    png_layer = pxl.frompil(png_image,psd_file=self.psd,layer_name="{}_{}".format(key,i),left=(cape_x+i)*250+self.maple_simu[key]['offsetx'][i]-x,top=(cape_y)*250+self.maple_simu[key]['offsety'][i]-y)
+                    
+                    png_layer2 = pxl.frompil(tmp_img,psd_file=self.psd,layer_name="{}_{}_tmp".format(key,i),left=(cape_x+i)*250+self.maple_simu[key]['offsetx'][i],top=(cape_y)*250+self.maple_simu[key]['offsety'][i])
                     self.layers[key]=png_layer
-                    self.psd.append(png_layer)
+                    group.append(png_layer)
+                    group2.append(png_layer2)
+                    # self.psd.append(png_layer)
                 except Exception as e:
                     errcnt+=1
-                    print("load failed")
-                    print(e)
-        print("total failed count:{}".format(errcnt))
+                    self.send_log(f"Loading {key}_{i} failed. ERRMSG:{e}","error",Color.RED)
+        self.send_log("total failed count:{}".format(errcnt),"info",Color.MAGENTA)
 
     '''
     Function Name:  update_canvas
@@ -273,24 +320,92 @@ class psd_utils(globalstuff):
     Author:         George Chang
     '''
     def get_offset(self, canvas, target):
-        import cv2
-        import numpy as np
-        large_image_pil = canvas  # 大圖 (Pillow 格式)
-        small_image_pil = target  # 小圖 (Pillow 格式)
 
-        # 將 PIL 圖像轉為 NumPy 陣列
-        large_image_np = np.array(large_image_pil.convert('L'))  # 轉為灰階並轉為陣列
-        small_image_np = np.array(small_image_pil.convert('L'))  # 轉為灰階並轉為陣列
+        try:
+            large_image = np.array(canvas.convert("RGBA"))
+            small_image = np.array(target.convert("RGBA"))
 
-        # 進行模板匹配
-        result = cv2.matchTemplate(large_image_np, small_image_np, cv2.TM_CCOEFF_NORMED)
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+            # 将背景区域设置为白色 (RGBA模式中的透明度部分处理)
+            # 对于canvas，将透明区域设置为白色
+            large_image[large_image[:, :, 3] == 0] = [255, 255, 255, 255]  # 背景变为白色
 
-        # 找到最佳匹配的位置
-        top_left = max_loc
-        h, w = small_image_np.shape
-        self.send_log("Top left: {}, w: {}, h: {}".format(top_left, w, h), "info", color=Color.YELLOW)
-        return top_left
+            # 对于target，将透明区域设置为白色
+            small_image[small_image[:, :, 3] == 0] = [255, 255, 255, 255]  # 背景变为白色
+
+            # 转换为灰度图像
+            large_image_np = cv2.cvtColor(large_image, cv2.COLOR_RGBA2GRAY)
+            small_image_np = cv2.cvtColor(small_image, cv2.COLOR_RGBA2GRAY)
+
+            if large_image_np.shape[0] < small_image_np.shape[0] or large_image_np.shape[1] < small_image_np.shape[1]:
+                self.send_log("Target image larger than canvas, skipping matchTemplate.", "warning", Color.RED)
+                return (0, 0)
+
+            # Template Matching
+            result = cv2.matchTemplate(large_image_np, small_image_np, cv2.TM_CCOEFF_NORMED)
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+            self.send_log(f"[TemplateMatch] Similarity: {max_val:.4f} @ {max_loc}", "info", color=Color.YELLOW)
+
+            # if max_val >= 0.8:
+            return max_loc
+
+        except Exception as e:
+            self.send_log(f"[TemplateMatch] Failed: {e}", "warning", Color.RED)
+        # self.show_debug_images(large_image_np, small_image_np, result)
+        # # 如果 Template 不行就用 ORB
+        # try:
+        #     orb = cv2.ORB_create(nfeatures=1000, scaleFactor=1.2, edgeThreshold=5, patchSize=31)
+        #     kp1, des1 = orb.detectAndCompute(large_image_np, None)
+        #     kp2, des2 = orb.detectAndCompute(small_image_np, None)
+
+        #     if des1 is None or des2 is None or len(kp1) == 0 or len(kp2) == 0:
+        #         self.send_log("[ORB] No keypoints detected", "warning", Color.RED)
+        #         return (0, 0)
+
+        #     bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=False)
+        #     matches = bf.knnMatch(des1, des2, k=2)
+
+        #     good = []
+        #     for m, n in matches:
+        #         if m.distance < 0.75 * n.distance:
+        #             good.append(m)
+
+        #     score = len(good) / max(len(kp1), len(kp2))
+        #     self.send_log(f"[ORB] Good matches: {len(good)}, score: {score:.4f}", "info", color=Color.CYAN)
+
+        #     if len(good) == 0:
+        #         return (0, 0)
+
+        #     pt = kp1[good[0].trainIdx].pt
+        #     return int(pt[0]), int(pt[1])
+
+        # except Exception as e:
+        #     self.send_log(f"[ORB] Failed: {e}", "warning", Color.RED)
+        #     return (0, 0)
+
+    def remove_alpha(self,pil_img, bg_color=(0, 0, 0)):
+        if pil_img.mode == 'RGBA':
+            bg = Image.new("RGB", pil_img.size, bg_color)  # 建立背景
+            bg.paste(pil_img, mask=pil_img.getchannel('A'))  # 用 Alpha 通道作為遮罩
+            return bg
+        else:
+            return pil_img.convert('RGB')
+
+    def show_debug_images(self,canvas, target, result):
+        plt.subplot(1, 3, 1)
+        plt.title("Canvas")
+        plt.imshow(canvas, cmap='gray')
+
+        plt.subplot(1, 3, 2)
+        plt.title("Target")
+        plt.imshow(target, cmap='gray')
+
+        plt.subplot(1, 3, 3)
+        plt.title("Match Heatmap")
+        plt.imshow(result, cmap='hot')
+
+        plt.tight_layout()
+        plt.show()
+
 
     '''
     Function Name:  preview
@@ -323,7 +438,7 @@ class psd_utils(globalstuff):
                     images.append(img)
                 except Exception as e:
                     errcnt+=1
-                    self.send_log("Load failed {}, ERR msg:{}".format(p, e),"error",color=Color.RED)
+                    self.send_log("Load failed {}, ERR msg:{}".format(key, e),"error",color=Color.RED)
             folder_path = "{}/preview/".format(root)
             if not os.path.exists(folder_path):
                 os.makedirs(folder_path)

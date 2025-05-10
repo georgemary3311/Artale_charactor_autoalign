@@ -32,5 +32,7 @@ check_and_install psd-tools psd_tools
 # Check and install opencv-python (imported as cv2)
 check_and_install opencv-python cv2
 
+check_and_install colorama colorama
+
 # Run the main script
 python3 main.py

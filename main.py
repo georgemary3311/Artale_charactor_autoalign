@@ -2,6 +2,7 @@ import os
 import json
 from lib.psd_utils import psd_utils as psdutil
 from lib.globalstuff import globalstuff, Color, File_type, Equipment
+import threading
 gs = globalstuff()
 
 root = os.getcwd()
@@ -67,21 +68,24 @@ def preview(name):
     psd.load_psd("{}/{}".format(root, name))
     psd.preview(root)
 
-def maples_im_align(url):
+def maples_im_align(url,filename):
     import subprocess
     import zipfile
     
     #download file
-    gs.download("{}&renderMode=1".format(url),"{}/tmp.zip".format(root))
-    gs.download("{}&renderMode=2".format(url),"{}/CharacterSpriteSheet.zip".format(root))
+    t1 = threading.Thread(target=gs.download, args=(f"{url}&renderMode=1", f"{root}/tmp.zip"))
+    t2 = threading.Thread(target=gs.download, args=(f"{url}&renderMode=2", f"{root}/CharacterSpriteSheet.zip"))
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
     # unzip file
     gs.unzip_file(root,"tmp.zip")
     gs.unzip_file(root,"CharacterSpriteSheet.zip")
     psd = psdutil()
-    psd.load_psd("{}/src/Avatar_Cape.psd".format(root))
-    # psd.load_png("{}/tmp/default/0/".format(root))
+    psd.load_psd("{}/src/{}.psd".format(root,filename))
     psd.load_png2("{}/CharacterSpriteSheet/default/0/".format(root),"{}/tmp/default/0/".format(root))
-    psd.save_psd("{}/Cape.psd".format(root))
+    psd.save_psd("{}/{}_Done.psd".format(root,filename))
 
 
 def make_chair_2pic(pic_name,filename,filename2="{}/src/Avatar_Longcoat.psd"):
@@ -149,6 +153,7 @@ def menu():
     menu = [
         lang["menu_title"],
         lang["option_auto_align"],
+        lang["option_align_by_maplesimulater"],
         lang["option_convert_psd_to_gif"],
         lang["option_make_big_chair_2"],
         lang["option_make_big_chair_4"],
@@ -157,16 +162,28 @@ def menu():
     while True:
         print("\n".join(menu))
         user_choice = input(lang["prompt_enter_choice"])
-        gs.send_log("User choice: {}".format(user_choice), level="info", color=Color.YELLOW)
+        gs.send_log("{} {}".format(lang['prompt_user_choise'],user_choice), level="info", color=Color.YELLOW)
         if user_choice == "1":
             gs.send_log(lang["info_auto_align_selected"], level="info", color=Color.GREEN)
             create_psd_by_png()
         elif user_choice == "2":
+            equit = gs.choose_equipment()
+            filename = "Avatar_{}".format(equit)
+            url = gs.get_maplesimu_url()
+            if url is None:
+                gs.send_log(lang['Maplestory_Simulater_Link_invalid'],"error", Color.RED)
+                continue
+            gs.send_log(lang['processing_url'],"info",Color.GREEN)
+            maples_im_align(url,filename)
+            # maples_im_align("https://maplestory.io/api/character/%7B%22itemId%22%3A2000%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A12000%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A1703140%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A1032005%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A50101%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A60136%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A1103305%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A1053024%2C%22version%22%3A%22255%22%7D/download?showears=false&showLefEars=false&showHighLefEars=undefined&resize=1&name=&flipX=undefined")
+            # maples_im_align("https://maplestory.io/api/character/%7B%22itemId%22%3A2000%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A12000%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A1011011%2C%22animationName%22%3A%22default%22%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A1103100%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A1054169%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A1005407%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A1703001%2C%22version%22%3A%22255%22%7D/download?showears=false&showLefEars=false&showHighLefEars=undefined&resize=1&name=&flipX=false&bgColor=222,35,35,0")
+            # maples_im_align("https://maplestory.io/api/character/%7B%22itemId%22%3A2000%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A12000%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A1053441%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A54537%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A40880%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A1103684%2C%22version%22%3A%22255%22%7D%2C%7B%22itemId%22%3A1703418%2C%22version%22%3A%22255%22%7D/download?showears=false&showLefEars=false&showHighLefEars=true&resize=1&name=&flipX=undefined")
+        elif user_choice == "3":
             gs.send_log(lang["info_convert_psd_to_gif_selected"], level="info", color=Color.GREEN)
             filename = input(lang["prompt_enter_filename"])
             preview(filename)
-        elif user_choice == "3":
-            filename = gs.choose_file(root, "psd")
+        elif user_choice == "4":
+            filename = gs.choose_file(root,["psd"])
             # filename = input(lang["prompt_enter_psd_filename"])
             equit = gs.choose_equipment()
             filename2 = "Avatar_{}.psd".format(equit)
@@ -182,7 +199,7 @@ def menu():
                 gs.send_log("Error: {} file(s) not found".format(err_cnt), level="error", color=Color.RED)
                 continue
             make_chair_2pic(pic_name,filename,filename2)
-        elif user_choice == "4":
+        elif user_choice == "5":
             # filename = input(lang["prompt_enter_psd_filename"])
             filename = gs.choose_file(root, ["psd"])
             # pic_name = input(lang["prompt_enter_chair_image"])
@@ -197,13 +214,14 @@ def menu():
                 gs.send_log("Error: {} file(s) not found".format(err_cnt), level="error", color=Color.RED)
                 continue
             make_chair_4pic(pic_name,filename)
+        
         elif user_choice == "0":
             gs.send_log(lang["info_exit_program"], level="info", color=Color.GREEN)
             break
         else:
             gs.send_log(lang["error_invalid_choice"].format(user_choice), level="error", color=Color.RED)
             continue
-        gs.send_log("User choice: {} Finished. \n\n".format(user_choice), level="info", color=Color.YELLOW)
+        gs.send_log("{} {} Finished. \n\n".format(lang['prompt_user_choise'],user_choice), level="info", color=Color.YELLOW)
 
 
 
